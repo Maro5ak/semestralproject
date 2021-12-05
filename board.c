@@ -5,8 +5,8 @@ int getRandom(const int max){
     return rand() % max;
 }
 
-bool checkBoard(Squares *sqrs){
-    return sqrs->numOfSquares < 9;
+bool checkBoard(Grid *grid, Squares *sqrs){
+    return sqrs->numOfSquares < grid->columns * grid->rows;
 }
 
 void generateGrid(Grid *grid, const int x, const int y){
@@ -57,6 +57,12 @@ void addSquare(Squares *sqrs, Square square){
     sqrs->squares[sqrs->numOfSquares-1] = square;
 }
 
+void printSquares(Squares *sqrs){
+    for(int i = 0; i < sqrs->numOfSquares; i++){
+        printf("[%d] -> pos[%d,%d]= %d\n", i, sqrs->squares[i].pos[0], sqrs->squares[i].pos[1], sqrs->squares[i].value);
+    }
+}
+
 void spawnSquare(Grid *grid, Squares *sqrs){
     Square sq;
 
@@ -71,6 +77,9 @@ void spawnSquare(Grid *grid, Squares *sqrs){
             grid->grid[x][y].free = false;
             break;
         }
-        else if(!checkBoard(sqrs)) fprintf(stdout, "Game Over!");
+        else if(!checkBoard(grid, sqrs)) {
+            fprintf(stdout, "Game Over!");
+            exit(-1);
+        }
     }
 }

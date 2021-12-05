@@ -10,6 +10,7 @@ typedef struct {
     int pos[2];
     int value;
     int color;
+    bool canMerge;
 } Square;
 
 typedef struct{
@@ -35,6 +36,8 @@ void generateGrid(Grid *grid, const int x, const int y);
 void addPiece(Grid *self, const BoardPiece piece, const int x, const int y);
 
 void addSquare(Squares *arr, Square square);
+
+void printSquares(Squares *sqrs);
 
 void printGrid(Grid *self, Squares *arr);
 
