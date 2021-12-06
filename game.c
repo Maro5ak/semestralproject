@@ -57,14 +57,14 @@ void sortColRight(Squares *sqrs){
 }
 
 void removeSquare(Squares *sqrs, int index){
-    printf("\n\n\nBefore move: \n");
-    printSquares(sqrs);
+    //printf("\n\n\nBefore move: \n");
+    //printSquares(sqrs);
     for(int i = index; i < sqrs->numOfSquares; i++){
         sqrs->squares[i] = sqrs->squares[i+1];
     }
     sqrs->numOfSquares -= 1;
-    printf("Move left:\n");
-    printSquares(sqrs);
+    //printf("Move left:\n");
+    //printSquares(sqrs);
 }
 
 int checkNeighbor(Square sq, Squares *sqrs, const int x, const int y){
@@ -102,7 +102,7 @@ void moveBoard(Grid *grid, Squares *sqrs, int x, int y){
             }
             
             else if(merge != -1) {
-                printf("Merge [%d] with [%d]\n", i, merge);
+                //printf("Merge [%d] with [%d]\n", i, merge);
                 sqrs->squares[i].value *= 2;
                 sqrs->squares[i].canMerge = false;
                 removeSquare(sqrs, merge);
@@ -113,7 +113,7 @@ void moveBoard(Grid *grid, Squares *sqrs, int x, int y){
                 break;
             }
         }
-        printf("Iteration: %d\n", i);
+        //printf("Iteration: %d\n", i);
         i++;
     }    
 }
@@ -126,26 +126,18 @@ void gameloop(Grid *grid, Squares *sqrs){
         switch(dir){
             case 'w':
                 sortRowUp(sqrs);
-                 printf("After sort: \n");
-                printSquares(sqrs);
                 moveBoard(grid, sqrs, -1, 0);
                 break;
             case 'a':
                 sortColLeft(sqrs);
-                printf("After sort: \n");
-                printSquares(sqrs);
                 moveBoard(grid, sqrs, 0, -1);
                 break;
             case 'd':
                 sortColRight(sqrs);
-                 printf("After sort: \n");
-                printSquares(sqrs);
                 moveBoard(grid, sqrs, 0, 1);
                 break;
             case 's':
                 sortRowDown(sqrs);
-                printf("After sort: \n");
-                printSquares(sqrs);
                 moveBoard(grid, sqrs, 1, 0);
                 break;
             default:
@@ -153,11 +145,8 @@ void gameloop(Grid *grid, Squares *sqrs){
                 break;
         }
         
-        printf("Before spawn: \n");
-        printSquares(sqrs);
         spawnSquare(grid, sqrs);
-        printf("After spawn: \n");
-        printSquares(sqrs);
+        system("clear");
         printGrid(grid, sqrs);
     }
 }

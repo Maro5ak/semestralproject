@@ -5,6 +5,10 @@ int getRandom(const int max){
     return rand() % max;
 }
 
+int getRandomTile(){
+    return rand() % 10 ? 2 : 4;
+}
+
 bool checkBoard(Grid *grid, Squares *sqrs){
     return sqrs->numOfSquares < grid->columns * grid->rows;
 }
@@ -25,7 +29,7 @@ void addPiece(Grid* grid, const BoardPiece piece, const int x, const int y){
 bool printSquare(Squares *sqrs, int x, int y){
     for(int i = 0; i < sqrs->numOfSquares; i++) {
         if(sqrs->squares[i].pos[0] == x && sqrs->squares[i].pos[1] == y){
-            printf("[%d]", sqrs->squares[i].value);
+            printf("[ %d ]", sqrs->squares[i].value);
             return true;
         }
     }
@@ -46,7 +50,7 @@ void assignCords(Grid *grid){
 void printGrid(Grid *grid, Squares *sqrs){
     for(int i = 0; i < grid->rows; i++){
         for(int j = 0; j < grid->columns; j++){
-            if(!printSquare(sqrs, i, j)) if(grid->grid[i][j].free) printf("[T]"); else printf("[F]");
+            if(!printSquare(sqrs, i, j)) if(grid->grid[i][j].free) printf("[ T ]"); else printf("[ F ]");
         }
         printf("\n");
     }
@@ -72,7 +76,7 @@ void spawnSquare(Grid *grid, Squares *sqrs){
         if(grid->grid[x][y].free){
             sq.pos[0] = x;
             sq.pos[1] = y;  
-            sq.value = 2;
+            sq.value = getRandomTile();
             addSquare(sqrs, sq);
             grid->grid[x][y].free = false;
             break;

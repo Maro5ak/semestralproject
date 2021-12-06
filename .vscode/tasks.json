@@ -10,6 +10,8 @@
                 "${fileDirname}/main.c",
                 "${fileDirname}/board.c",
                 "${fileDirname}/game.c",
+                "${fileDirname}/renderer.c",
+                "-lSDL2",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}"
             ],

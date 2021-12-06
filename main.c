@@ -1,6 +1,8 @@
 #include "game.h"
+#include "renderer.h"
 
 int main(){
-    init();
-    return 0;
+    //init();
+    if (openWindow() == 1) return 1;
+    else return 0;
 }
