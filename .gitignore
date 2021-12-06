@@ -1,2 +1,6 @@
 out
 makefile
+~/.vscode/*.json
+game
+main
+renderer
