@@ -1,6 +1,7 @@
 #ifndef RENDERER
 #define RENDERER
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 
 typedef struct{
     SDL_Window *window;
@@ -8,6 +9,6 @@ typedef struct{
     int width;
 }WindowDetails;
 
-int openWindow();
+int openWindow(Grid *grid, Squares *sqrs);
 
 #endif

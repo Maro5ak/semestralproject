@@ -1,65 +1,66 @@
 #include "game.h"
+#include "renderer.h"
 
-bool checkFree(Grid *grid, const int x, const int y){
-    return grid->grid[x][y].free;
+bool checkFree(Grid *grid, const int r, const int c){
+    return grid->grid[r][c].free;
 }
 
-bool checkBound(Grid *grid, const int x, const int y){
-    return x != grid->rows && y != grid->columns && x != -1 && y != -1;
+bool checkBound(Grid *grid, const int r, const int c){
+    return r != grid->rows && c != grid->columns && r != -1 && c != -1;
 }
 
 void sortRowUp(Squares *sqrs){
-    for(int x = 0; x < sqrs->numOfSquares; x++){
-        for(int y = x+1; y < sqrs->numOfSquares; y++){
-            if(sqrs->squares[x].pos[0] > sqrs->squares[y].pos[0]){
-                Square temp = sqrs->squares[x];
-                sqrs->squares[x] = sqrs->squares[y];
-                sqrs->squares[y] = temp;
+    for(int r = 0; r < sqrs->numOfSquares; r++){
+        for(int c = r+1; c < sqrs->numOfSquares; c++){
+            if(sqrs->squares[r].pos[0] > sqrs->squares[c].pos[0]){
+                Square temp = sqrs->squares[r];
+                sqrs->squares[r] = sqrs->squares[c];
+                sqrs->squares[c] = temp;
             }
         }
     }
 }
 
 void sortRowDown(Squares *sqrs){
-    for(int x = 0; x < sqrs->numOfSquares; x++){
-        for(int y = x+1; y < sqrs->numOfSquares; y++){
-            if(sqrs->squares[x].pos[0] < sqrs->squares[y].pos[0]){
-                Square temp = sqrs->squares[x];
-                sqrs->squares[x] = sqrs->squares[y];
-                sqrs->squares[y] = temp;
+    for(int r = 0; r < sqrs->numOfSquares; r++){
+        for(int c = r+1; c < sqrs->numOfSquares; c++){
+            if(sqrs->squares[r].pos[0] < sqrs->squares[c].pos[0]){
+                Square temp = sqrs->squares[r];
+                sqrs->squares[r] = sqrs->squares[c];
+                sqrs->squares[c] = temp;
             }
         }
     }
 }
 
 void sortColLeft(Squares *sqrs){
-    for(int x = 0; x < sqrs->numOfSquares; x++){
-        for(int y = x+1; y < sqrs->numOfSquares; y++){
-            if(sqrs->squares[x].pos[1] > sqrs->squares[y].pos[1]){
-                Square temp = sqrs->squares[x];
-                sqrs->squares[x] = sqrs->squares[y];
-                sqrs->squares[y] = temp;
+    for(int r = 0; r < sqrs->numOfSquares; r++){
+        for(int c = r+1; c < sqrs->numOfSquares; c++){
+            if(sqrs->squares[r].pos[1] > sqrs->squares[c].pos[1]){
+                Square temp = sqrs->squares[r];
+                sqrs->squares[r] = sqrs->squares[c];
+                sqrs->squares[c] = temp;
             }
         }
     }
 }
 
 void sortColRight(Squares *sqrs){
-    for(int x = 0; x < sqrs->numOfSquares; x++){
-        for(int y = x+1; y < sqrs->numOfSquares; y++){
-            if(sqrs->squares[x].pos[1] < sqrs->squares[y].pos[1]){
-                Square temp = sqrs->squares[x];
-                sqrs->squares[x] = sqrs->squares[y];
-                sqrs->squares[y] = temp;
+    for(int r = 0; r < sqrs->numOfSquares; r++){
+        for(int c = r+1; c < sqrs->numOfSquares; c++){
+            if(sqrs->squares[r].pos[1] < sqrs->squares[c].pos[1]){
+                Square temp = sqrs->squares[r];
+                sqrs->squares[r] = sqrs->squares[c];
+                sqrs->squares[c] = temp;
             }
         }
     }
 }
 
-void removeSquare(Squares *sqrs, int index){
+void removeSquare(Squares *sqrs, int inder){
     //printf("\n\n\nBefore move: \n");
     //printSquares(sqrs);
-    for(int i = index; i < sqrs->numOfSquares; i++){
+    for(int i = inder; i < sqrs->numOfSquares; i++){
         sqrs->squares[i] = sqrs->squares[i+1];
     }
     sqrs->numOfSquares -= 1;
@@ -67,9 +68,9 @@ void removeSquare(Squares *sqrs, int index){
     //printSquares(sqrs);
 }
 
-int checkNeighbor(Square sq, Squares *sqrs, const int x, const int y){
+int checkNeighbor(Square sq, Squares *sqrs, const int r, const int c){
     for(int i = 0; i < sqrs->numOfSquares; i++){
-        if(sqrs->squares[i].pos[0] == x && sqrs->squares[i].pos[1] == y){
+        if(sqrs->squares[i].pos[0] == r && sqrs->squares[i].pos[1] == c){
             if(sqrs->squares[i].value == sq.value) {
                 if(sq.canMerge && sqrs->squares[i].canMerge)
                     return i;
@@ -85,20 +86,20 @@ void resetMerge(Squares *sqrs){
     }
 }
 
-void moveBoard(Grid *grid, Squares *sqrs, int x, int y){
+void movegrid(Grid *grid, Squares *sqrs, int r, int c){
     resetMerge(sqrs);
     int i = 0;
     while(i < sqrs->numOfSquares){    
-        int tmpRow = sqrs->squares[i].pos[0]+x, tmpCol = sqrs->squares[i].pos[1]+y;
+        int tmpRow = sqrs->squares[i].pos[0]+r, tmpCol = sqrs->squares[i].pos[1]+c;
         while(checkBound(grid, tmpRow, tmpCol)){
             int merge = checkNeighbor(sqrs->squares[i], sqrs, tmpRow, tmpCol);
             if(checkFree(grid, tmpRow, tmpCol)){
                 sqrs->squares[i].pos[0] = tmpRow;
                 sqrs->squares[i].pos[1] = tmpCol;
                 grid->grid[tmpRow][tmpCol].free = false;
-                grid->grid[tmpRow-x][tmpCol-y].free = true;
-                tmpRow += x;
-                tmpCol += y;
+                grid->grid[tmpRow-r][tmpCol-c].free = true;
+                tmpRow += r;
+                tmpCol += c;
             }
             
             else if(merge != -1) {
@@ -118,27 +119,52 @@ void moveBoard(Grid *grid, Squares *sqrs, int x, int y){
     }    
 }
 
+void handleInput(Direction dir, Grid *grid, Squares *sqrs){
+    switch(dir){
+            case D_UP:
+                sortRowUp(sqrs);
+                movegrid(grid, sqrs, -1, 0);
+                break;
+            case D_LEFT:
+                sortColLeft(sqrs);
+                movegrid(grid, sqrs, 0, -1);
+                break;
+            case D_RIGHT:
+                sortColRight(sqrs);
+                movegrid(grid, sqrs, 0, 1);
+                break;
+            case D_DOWN:
+                sortRowDown(sqrs);
+                movegrid(grid, sqrs, 1, 0);
+                break;
+            default:
+                fprintf(stderr, "Wrong input");
+                break;
+        }
+    spawnSquare(grid, sqrs);
+}
 
-void gameloop(Grid *grid, Squares *sqrs){
+int gameloop(Grid *grid, Squares *sqrs){
+    openWindow(grid, sqrs);
     char dir;
-    while(1){
+    /*while(1){
         scanf(" %c", &dir);
         switch(dir){
             case 'w':
                 sortRowUp(sqrs);
-                moveBoard(grid, sqrs, -1, 0);
+                movegrid(grid, sqrs, -1, 0);
                 break;
             case 'a':
                 sortColLeft(sqrs);
-                moveBoard(grid, sqrs, 0, -1);
+                movegrid(grid, sqrs, 0, -1);
                 break;
             case 'd':
                 sortColRight(sqrs);
-                moveBoard(grid, sqrs, 0, 1);
+                movegrid(grid, sqrs, 0, 1);
                 break;
             case 's':
                 sortRowDown(sqrs);
-                moveBoard(grid, sqrs, 1, 0);
+                movegrid(grid, sqrs, 1, 0);
                 break;
             default:
                 fprintf(stderr, "Wrong input");
@@ -146,27 +172,31 @@ void gameloop(Grid *grid, Squares *sqrs){
         }
         
         spawnSquare(grid, sqrs);
-        system("clear");
+        scstem("clear");
         printGrid(grid, sqrs);
-    }
+    }*/
+    return 0;
 }
 
 
-void init(){
+int init(){
     srand(time(0));
-    int x = 4;
-    int y = 4;
-    Grid *board;
+    int r = 4;
+    int c = 4;
+    Grid *grid;
     Squares *squares;
-    board = malloc(sizeof(Grid));
+    grid = malloc(sizeof(Grid));
     squares = malloc(sizeof(Square));
-    squares->squares = malloc(x * y * sizeof(Square));
+    squares->squares = malloc(r * c * sizeof(Square));
 
-    generateGrid(board, x, y);
-    assignCords(board);
+    generateGrid(grid, r, c);
+    assignCords(grid);
     squares->numOfSquares = 0;
-    spawnSquare(board, squares);
-    spawnSquare(board, squares);
-    printGrid(board, squares);
-    gameloop(board, squares);
+    spawnSquare(grid, squares);
+    spawnSquare(grid, squares);
+    printGrid(grid, squares);
+    //gameloop(grid, squares);
+    openWindow(grid, squares);
+
+    return 0;
 }

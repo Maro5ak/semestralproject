@@ -1,8 +1,8 @@
 #include "game.h"
 #include "renderer.h"
+#include "utils.h"
 
 int main(){
-    //init();
-    if (openWindow() == 1) return 1;
+    if (init() == 1) return 1;
     else return 0;
 }

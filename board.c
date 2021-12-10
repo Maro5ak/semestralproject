@@ -17,7 +17,7 @@ void generateGrid(Grid *grid, const int x, const int y){
     grid->rows = x;
     grid->columns = y;
     grid->grid = (BoardPiece**)malloc(x * sizeof(BoardPiece*));
-    for(int i = 0; i < y; i++){
+    for(int i = 0; i < x; i++){
         grid->grid[i] = (BoardPiece*)malloc(y * sizeof(BoardPiece));
     }
 }

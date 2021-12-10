@@ -5,11 +5,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+typedef enum{
+    D_UP = 0,
+    D_DOWN = 1,
+    D_RIGHT = 2,
+    D_LEFT = 3
+} Direction;
 
 typedef struct {
     int pos[2];
     int value;
-    int color;
+    int color[3];
     bool canMerge;
 } Square;
 
@@ -45,6 +51,8 @@ void assignCords(Grid *self);
 
 void spawnSquare(Grid *self, Squares *arr);
 
-void init();
+int init();
+
+void handleInput(Direction dir, Grid *grid, Squares *sqrs);
 
 #endif
