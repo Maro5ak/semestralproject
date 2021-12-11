@@ -2,32 +2,107 @@
 #include "renderer.h"
 #include "utils.h"
 
-void drawValue(SDL_Renderer *renderer, SDL_Rect square, char *value){
+int drawScore(WindowDetails windowd, SDL_Renderer *renderer, TTF_Font *font, int score){
     SDL_Surface *textSurface;
-    TTF_Font *font = TTF_OpenFont("OpenSans.ttf", 256);
-    if(!font){
-        fprintf(stderr, "No font\n");
-        return;   
+    char *scoreText = intToString(score);
+    char *fullScoreText = concatStrings("Score: ", scoreText);
+    int width = strlen(fullScoreText);
+    SDL_Color black = {0,0,0,0};
+    textSurface = TTF_RenderText_Solid(font, fullScoreText, black);
+    if(textSurface == NULL){
+        fprintf(stderr, "Couldn't create surface\n");
+        return 1;
     }
-    SDL_Color white = {255, 255, 255, 0};
-    textSurface = TTF_RenderText_Solid(font, value, white);
     SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if(text == NULL){
+        fprintf(stderr, "Couldn't create texture\n");
+        return 1;
+    }
     SDL_Rect textBox = {
-        .h = square.h-50,
-        .w = square.w-80,
-        .x = square.x+20,
-        .y = square.y + 20
+        .h = 75,
+        .w = (25 * width) + (200 / width),
+        .x = 100,
+        .y = 10
+    };
+    
+    SDL_RenderCopy(renderer, text, NULL, &textBox);
+    free(fullScoreText);
+    free(scoreText);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(text);
+
+    return 0;
+}
+
+int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font){
+    char *gameover = "Game Over!";
+    SDL_Surface *textSurface;
+    SDL_Color black = {0,0,0,0};
+    textSurface = TTF_RenderText_Solid(font, gameover, black);
+    if(textSurface == NULL){
+        fprintf(stderr, "Couldn't create surface\n");
+        return 1;
+    }
+    SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if(text == NULL){
+        fprintf(stderr, "Couldn't create texture\n");
+        return 1;
+    }
+    SDL_Rect textBox = {
+        .h = 75,
+        .w = (25 * 10) + (200 / 10),
+        .x = 500,
+        .y = 10
+    };
+    
+    SDL_RenderCopy(renderer, text, NULL, &textBox);
+    SDL_FreeSurface(textSurface);
+    SDL_DestroyTexture(text);
+
+    return 0;
+}
+
+int drawValue(SDL_Renderer *renderer, SDL_Rect square, TTF_Font *font, int value){
+    SDL_Surface *textSurface;
+    char *squareValue = intToString(value);
+    int textWidth = strlen(squareValue);
+    SDL_Color textColor = {255,255,255,0};
+    if(value == 2 || value == 4) {
+        textColor.r = 0;
+        textColor.g = 0;
+        textColor.b = 0;
+        textColor.a = 0;
+    }
+    textSurface = TTF_RenderText_Solid(font, squareValue, textColor);
+    if(textSurface == NULL){
+        fprintf(stderr, "Couldn't create surface\n");
+        return 1;
+    }
+    SDL_Texture *text = SDL_CreateTextureFromSurface(renderer, textSurface);
+    if(text == NULL){
+        fprintf(stderr, "Couldn't create texture\n");
+        return 1;
+    }
+    int offsetH, offsetV;
+    offsetH = calculateOffset(square.h, 1, square.h * 0.4, 20);
+    offsetV = calculateOffset(square.w, 1, square.w * (0.2 * textWidth), 20);
+    SDL_Rect textBox = {
+        .h = square.h * 0.4,
+        .w = square.w * (0.2 * textWidth),
+        .x = square.x + offsetV,
+        .y = square.y + offsetH
     };
     
     SDL_RenderCopy(renderer, text, NULL, &textBox);
 
-    
     SDL_FreeSurface(textSurface);
     SDL_DestroyTexture(text);
+    free(squareValue);
+    return 0;
 }
 
 
-void drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
+int drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
     double guideSize = grid->columns >= grid->rows ? grid->columns : grid->rows;
     double space = 10;
     
@@ -48,9 +123,10 @@ void drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
             SDL_RenderFillRect(renderer, &gridPiece);
         }
     }
+    return 0;
 }
 
-void drawSquares(WindowDetails windowd, SDL_Renderer *renderer, Squares *sqrs, Grid *grid){
+int drawSquares(WindowDetails windowd, SDL_Renderer *renderer, Squares *sqrs, Grid *grid, TTF_Font *font){
     double guideSize = grid->columns >= grid->rows ? grid->columns : grid->rows;
     double space = 10;
     
@@ -68,16 +144,20 @@ void drawSquares(WindowDetails windowd, SDL_Renderer *renderer, Squares *sqrs, G
         col = sqrs->squares[num].pos[1];
         square.x = (col * (square.w / space)) + (col * square.w) + offset;
         square.y = (row * (square.h / space)) + (row * square.h) + 100;
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+        SDL_SetRenderDrawColor(renderer, sqrs->squares[num].color.r, sqrs->squares[num].color.g, sqrs->squares[num].color.b, 0xFF);
         SDL_RenderFillRect(renderer, &square);
-        drawValue(renderer, square, intToString(sqrs->squares[num].value));
+
+       
+        if (drawValue(renderer, square, font, sqrs->squares[num].value) == 1) return 1;
     }
+    return 0;
 }
 
 int openWindow(Grid *grid, Squares *sqrs){
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
     SDL_Event e;
+    TTF_Font *font = NULL;
     bool quit = false;
 
     WindowDetails windowd = {
@@ -88,7 +168,8 @@ int openWindow(Grid *grid, Squares *sqrs){
 
     SDL_Init(SDL_INIT_VIDEO);
     TTF_Init();
-
+    font = TTF_OpenFont("OpenSans.ttf", 256);
+    
     window = SDL_CreateWindow(
         "2048",
         SDL_WINDOWPOS_UNDEFINED,
@@ -97,6 +178,11 @@ int openWindow(Grid *grid, Squares *sqrs){
         windowd.height,
         SDL_WINDOW_SHOWN
     );
+
+    if(font == NULL){
+        fprintf(stderr, "Couldn't load font\n");
+        return 1;   
+    }
 
     if(window == NULL){
         fprintf(stderr, "Couldn't open SDL Window.\n");
@@ -108,7 +194,7 @@ int openWindow(Grid *grid, Squares *sqrs){
         fprintf(stderr, "Couldn't create Renderer.\n");
         return 1;
     }
-    
+    bool gameOver = 0;
     //MAIN LOOP
     while(!quit){
         
@@ -120,40 +206,59 @@ int openWindow(Grid *grid, Squares *sqrs){
             else if(e.type == SDL_KEYDOWN){
                 switch(e.key.keysym.sym){
                     case SDLK_UP:  
-                        handleInput(D_UP, grid, sqrs);
+                        gameOver = handleInput(D_UP, grid, sqrs);
                         break;
                     case SDLK_DOWN:
-                        handleInput(D_DOWN, grid, sqrs);
+                        gameOver = handleInput(D_DOWN, grid, sqrs);
                         break;
                     case SDLK_RIGHT:
-                        handleInput(D_RIGHT, grid, sqrs);
+                        gameOver = handleInput(D_RIGHT, grid, sqrs);
                         break;
                     case SDLK_LEFT:
-                        handleInput(D_LEFT, grid, sqrs);
+                        gameOver = handleInput(D_LEFT, grid, sqrs);
                         break;
                     case SDLK_ESCAPE:
-                        quit = 1;
+                        quit = true;
                         break;
-                }
-            }       
+                }    
+            }   
+            
             
             SDL_SetRenderDrawColor(renderer, 0x80, 0x80, 0x80, 0xFF);
             SDL_RenderClear(renderer);
-            drawGrid(windowd, renderer, grid);
-            drawSquares(windowd,renderer, sqrs, grid);
+            if (drawGrid(windowd, renderer, grid) == 1) {
+                fprintf(stderr, "Couldn't print grid\n");
+                return 1;
+            }
+            if (drawSquares(windowd,renderer, sqrs, grid, font) == 1) {
+                fprintf(stderr, "Couldn't draw squares\n");
+                return 1;
+            }
+            if(drawScore(windowd, renderer, font, sqrs->score) == 1){
+                fprintf(stderr, "Couldn't draw score\n");
+                return 1;
+            }
+            if(gameOver){
+                if(drawGameOverText(renderer, font) == 1){
+                    fprintf(stderr, "Couldn't draw gameover\n");
+                    return 1;
+                }
+            }
             
             //Update screen
             SDL_RenderPresent(renderer);
 
         }
+
     }
     
 
     //Cleanup; function throws seg fault, dunno why, screw it
+    //also address sanitizer is freaking out with SDL2 libs. Hopefully not the biggest problem tho.
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
     
-    return quit ? 1 : 0;
+    return 0;
     
 }

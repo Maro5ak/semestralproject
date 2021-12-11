@@ -1,17 +1,13 @@
-#include "game.h"
-
+#include "game.h"   
 
 int getRandom(const int max){
     return rand() % max;
 }
 
-int getRandomTile(){
+int getRandomValue(){
     return rand() % 10 ? 2 : 4;
 }
 
-bool checkBoard(Grid *grid, Squares *sqrs){
-    return sqrs->numOfSquares < grid->columns * grid->rows;
-}
 
 void generateGrid(Grid *grid, const int x, const int y){
     grid->rows = x;
@@ -25,7 +21,7 @@ void generateGrid(Grid *grid, const int x, const int y){
 void addPiece(Grid* grid, const BoardPiece piece, const int x, const int y){
     grid->grid[x][y] = piece;
 }
-
+/*
 bool printSquare(Squares *sqrs, int x, int y){
     for(int i = 0; i < sqrs->numOfSquares; i++) {
         if(sqrs->squares[i].pos[0] == x && sqrs->squares[i].pos[1] == y){
@@ -35,6 +31,7 @@ bool printSquare(Squares *sqrs, int x, int y){
     }
     return false;
 }
+*/
 void assignCords(Grid *grid){
     BoardPiece pc;
     for(int i = 0; i < grid->rows; i++){
@@ -46,7 +43,7 @@ void assignCords(Grid *grid){
         }
     }
 }
-
+/*
 void printGrid(Grid *grid, Squares *sqrs){
     for(int i = 0; i < grid->rows; i++){
         for(int j = 0; j < grid->columns; j++){
@@ -54,19 +51,20 @@ void printGrid(Grid *grid, Squares *sqrs){
         }
         printf("\n");
     }
-}
+}*/
 
 void addSquare(Squares *sqrs, Square square){
     sqrs->numOfSquares += 1;
+    sqrs->squares = realloc(sqrs->squares, sqrs->numOfSquares * sizeof(Square));
     sqrs->squares[sqrs->numOfSquares-1] = square;
 }
-
+/*
 void printSquares(Squares *sqrs){
     for(int i = 0; i < sqrs->numOfSquares; i++){
         printf("[%d] -> pos[%d,%d]= %d\n", i, sqrs->squares[i].pos[0], sqrs->squares[i].pos[1], sqrs->squares[i].value);
     }
 }
-
+*/
 void spawnSquare(Grid *grid, Squares *sqrs){
     Square sq;
 
@@ -76,14 +74,11 @@ void spawnSquare(Grid *grid, Squares *sqrs){
         if(grid->grid[x][y].free){
             sq.pos[0] = x;
             sq.pos[1] = y;  
-            sq.value = getRandomTile();
+            sq.value = getRandomValue();
+            sq.color = colorDict(sqrs, sq);
             addSquare(sqrs, sq);
             grid->grid[x][y].free = false;
             break;
-        }
-        else if(!checkBoard(grid, sqrs)) {
-            fprintf(stdout, "Game Over!");
-            exit(-1);
         }
     }
 }

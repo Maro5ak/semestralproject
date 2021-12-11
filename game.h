@@ -1,5 +1,5 @@
-#ifndef BOARD
-#define BOARD
+#ifndef GAME
+#define GAME
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,14 +12,23 @@ typedef enum{
     D_LEFT = 3
 } Direction;
 
+typedef struct{
+    int r;
+    int g;
+    int b;
+}RGB;
+
+
 typedef struct {
     int pos[2];
     int value;
-    int color[3];
+    RGB color;
     bool canMerge;
 } Square;
 
 typedef struct{
+    int score;
+    RGB *colors;
     Square *squares;
     int numOfSquares;
 } Squares;
@@ -37,6 +46,8 @@ typedef struct {
     int columns;
 } Grid;
 
+RGB colorDict(Squares *sqrs, Square sq);
+
 void generateGrid(Grid *grid, const int x, const int y);
 
 void addPiece(Grid *self, const BoardPiece piece, const int x, const int y);
@@ -53,6 +64,6 @@ void spawnSquare(Grid *self, Squares *arr);
 
 int init();
 
-void handleInput(Direction dir, Grid *grid, Squares *sqrs);
+int handleInput(Direction dir, Grid *grid, Squares *sqrs);
 
 #endif

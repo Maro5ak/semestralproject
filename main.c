@@ -1,8 +1,13 @@
 #include "game.h"
-#include "renderer.h"
 #include "utils.h"
 
-int main(){
-    if (init() == 1) return 1;
-    else return 0;
+int main(int argc, char const *argv[]){
+    int *args = parseArgs(argc, argv);
+    if(args != NULL){
+        if (init(args) == 1) return 1;
+    }
+    free(args);
+
+    
+    return 0;
 }
