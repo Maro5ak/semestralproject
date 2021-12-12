@@ -36,10 +36,10 @@ int drawScore(WindowDetails windowd, SDL_Renderer *renderer, TTF_Font *font, int
 }
 
 //Function to draw the game over or win text on the right
-int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font, char *text){
+int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font, char *message){
     SDL_Surface *textSurface;
     SDL_Color black = {0,0,0,0};
-    textSurface = TTF_RenderText_Solid(font, text, black);
+    textSurface = TTF_RenderText_Solid(font, message, black);
     if(textSurface == NULL){
         fprintf(stderr, "Couldn't create surface\n");
         return 1;
