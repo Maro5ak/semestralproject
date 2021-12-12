@@ -8,6 +8,5 @@ int main(int argc, char const *argv[]){
     }
     free(args);
 
-    
     return 0;
 }

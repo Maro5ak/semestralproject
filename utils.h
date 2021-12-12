@@ -1,11 +1,12 @@
 #ifndef UTILS
 #define UTILS
-#include<stdlib.h>
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 
-static char *formatting = "[-s] [int,int]";
-static char *maxsize = "number between 2 and 100";
+static char *formatting = "[-s] [intxint]";
+static char *maxsize = "number between 2 and 30";
 
 char *concatStrings(char *str1, char *str2);
 

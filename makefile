@@ -1,2 +1,2 @@
 compile: $(wildcard *.c)
-	gcc -o out $? -I. -lSDL2 -lSDL2_ttf -fsanitize=address
+	gcc -o 2048 $? -I. -lSDL2 -lSDL2_ttf

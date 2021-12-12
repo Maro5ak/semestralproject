@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "utils.h"
 
+//Function that draws the score on the top of the screen. 
 int drawScore(WindowDetails windowd, SDL_Renderer *renderer, TTF_Font *font, int score){
     SDL_Surface *textSurface;
     char *scoreText = intToString(score);
@@ -34,11 +35,11 @@ int drawScore(WindowDetails windowd, SDL_Renderer *renderer, TTF_Font *font, int
     return 0;
 }
 
-int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font){
-    char *gameover = "Game Over!";
+//Function to draw the game over or win text on the right
+int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font, char *text){
     SDL_Surface *textSurface;
     SDL_Color black = {0,0,0,0};
-    textSurface = TTF_RenderText_Solid(font, gameover, black);
+    textSurface = TTF_RenderText_Solid(font, text, black);
     if(textSurface == NULL){
         fprintf(stderr, "Couldn't create surface\n");
         return 1;
@@ -62,6 +63,7 @@ int drawGameOverText(SDL_Renderer *renderer, TTF_Font *font){
     return 0;
 }
 
+//Function that draws the values inside the tiles. Dynamic size of the text and centered
 int drawValue(SDL_Renderer *renderer, SDL_Rect square, TTF_Font *font, int value){
     SDL_Surface *textSurface;
     char *squareValue = intToString(value);
@@ -101,7 +103,7 @@ int drawValue(SDL_Renderer *renderer, SDL_Rect square, TTF_Font *font, int value
     return 0;
 }
 
-
+//Function that draws the grid. Dynamic tile sizes depending on the number of them
 int drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
     double guideSize = grid->columns >= grid->rows ? grid->columns : grid->rows;
     double space = 10;
@@ -112,8 +114,6 @@ int drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
     };
     
     double offset;
-    //offset = (double)windowd.width - ((((double)grid->columns * (double)gridPiece.w)) + (((double)grid->columns - (double)1) * ((double)gridPiece.w / space)));
-    //offset /= 2;
     offset = calculateOffset((double)windowd.width, (double)grid->columns, (double)gridPiece.w, space);
     for(int r = 0; r < grid->rows; r++){
         for(int c = 0; c < grid->columns; c++){
@@ -126,6 +126,7 @@ int drawGrid(WindowDetails windowd, SDL_Renderer *renderer, Grid *grid){
     return 0;
 }
 
+//Function that draws the tiles with values and their correct assigned colors.
 int drawSquares(WindowDetails windowd, SDL_Renderer *renderer, Squares *sqrs, Grid *grid, TTF_Font *font){
     double guideSize = grid->columns >= grid->rows ? grid->columns : grid->rows;
     double space = 10;
@@ -153,6 +154,7 @@ int drawSquares(WindowDetails windowd, SDL_Renderer *renderer, Squares *sqrs, Gr
     return 0;
 }
 
+//Function that handles opening SDL window, creating Renderer, loading Font and linking the game logic with the rendering
 int openWindow(Grid *grid, Squares *sqrs){
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
@@ -194,7 +196,7 @@ int openWindow(Grid *grid, Squares *sqrs){
         fprintf(stderr, "Couldn't create Renderer.\n");
         return 1;
     }
-    bool gameOver = 0;
+    int gameOver = 0;
     //MAIN LOOP
     while(!quit){
         
@@ -238,8 +240,14 @@ int openWindow(Grid *grid, Squares *sqrs){
                 fprintf(stderr, "Couldn't draw score\n");
                 return 1;
             }
-            if(gameOver){
-                if(drawGameOverText(renderer, font) == 1){
+            if(gameOver == 1){
+                if(drawGameOverText(renderer, font, "Game Over!") == 1){
+                    fprintf(stderr, "Couldn't draw gameover\n");
+                    return 1;
+                }
+            }
+            if(gameOver == 2){
+                if(drawGameOverText(renderer, font, "You Win!") == 1){
                     fprintf(stderr, "Couldn't draw gameover\n");
                     return 1;
                 }
@@ -253,8 +261,8 @@ int openWindow(Grid *grid, Squares *sqrs){
     }
     
 
-    //Cleanup; function throws seg fault, dunno why, screw it
-    //also address sanitizer is freaking out with SDL2 libs. Hopefully not the biggest problem tho.
+    //Cleanup; function throws seg fault, dunno why
+    //also address sanitizer is freaking out with SDL2 libs. Shouldn't be the biggest of problems tho
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
