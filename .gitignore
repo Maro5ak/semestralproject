@@ -1,6 +1,6 @@
 out
-makefile
-~/.vscode/*.json
+.vscode/
 game
 main
 renderer
+2048
