@@ -2,7 +2,7 @@
 A semestral project. Simple 2048 clone made in C language utilizing SDL2 library. 
 ### Features 
 - Score counter
-- Multiple grid sizes 
+- User defined grid sizes 
 - Arrow keys controls
 
 ### How to play
@@ -12,12 +12,13 @@ A semestral project. Simple 2048 clone made in C language utilizing SDL2 library
 
 #### Installation 
 >*Currently only available for Linux.*  
-1. Insall SDL2 Libraries (command for Debian and Ubuntu based systems)
+1. Install SDL2 Libraries (command for Debian and Ubuntu based systems)
 2. Clone the repository
 3. Navigate into the created directory
 4. Compile with Makefile (included)
 5. Run the game specifying the size with **-s** argument followed by **rows**x**columns**.   
-    - Size can range from 2 to 100 (although the higher the size, the lower the visibility)
+    - Size can range from 2 to 100 (although the higher the size, the lower the visibility of values)
+    - Either press Escape or close the window to quit.
 ```
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev
 git clone https://github.com/Maro5ak/semestralproject
