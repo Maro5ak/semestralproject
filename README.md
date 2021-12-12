@@ -16,7 +16,7 @@ A semestral project. Simple 2048 clone made in C language utilizing SDL2 library
 2. Clone the repository
 3. Navigate into the created directory
 4. Compile with Makefile (included)
-5. Run the game specifying the size with **-s** argument followed by **rows,columns**.   
+5. Run the game specifying the size with **-s** argument followed by **rows**x**columns**.   
     - Size can range from 2 to 100 (although the higher the size, the lower the visibility)
 ```
 sudo apt-get install libsdl2-dev libsdl2-ttf-dev
