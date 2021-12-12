@@ -10,7 +10,7 @@ char *concatStrings(char *str1, char *str2){
 
 //Function to check format of arguments. Delimiter must be x while specifying size, otherwise Formatting error
 int checkFormat(const char *input){
-    for(int i = 0; i < strlen(input); i++) {
+    for(int i = 0; i < (int)strlen(input); i++) {
         if(input[i] == 'x') return 0;
     }
     return 1;

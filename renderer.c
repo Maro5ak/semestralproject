@@ -3,7 +3,7 @@
 #include "utils.h"
 
 //Function that draws the score on the top of the screen. 
-int drawScore(WindowDetails windowd, SDL_Renderer *renderer, TTF_Font *font, int score){
+int drawScore(SDL_Renderer *renderer, TTF_Font *font, int score){
     SDL_Surface *textSurface;
     char *scoreText = intToString(score);
     char *fullScoreText = concatStrings("Score: ", scoreText);
@@ -236,7 +236,7 @@ int openWindow(Grid *grid, Squares *sqrs){
                 fprintf(stderr, "Couldn't draw squares\n");
                 return 1;
             }
-            if(drawScore(windowd, renderer, font, sqrs->score) == 1){
+            if(drawScore(renderer, font, sqrs->score) == 1){
                 fprintf(stderr, "Couldn't draw score\n");
                 return 1;
             }

@@ -54,6 +54,8 @@ RGB colorDict(Squares *sqrs, Square sq){
             return sqrs->colors[9];
         case 2048:
             return sqrs->colors[10];
+        default:
+            return sqrs->colors[0];
     }
 }
 
