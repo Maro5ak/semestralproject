@@ -6,7 +6,7 @@ A semestral project. Simple 2048 clone made in C language utilizing SDL2 library
 - Arrow keys controls
 
 ### How to play
-- Use arrow keys to move the tiles on the board. All of the tiles then move to that direction.
+- Use arrow keys to move the tiles on the board. All of the tiles then move in that direction.
 - Try to merge tiles with same values to join them together.
 - The goal is to reach 2048.
 
